@@ -13,8 +13,6 @@ public class AddActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
 
-        GoogleMap map = ((MapFragment) getFragmentManager()
-            .findFragmentById(R.id.map).getMap)
     }
 
 
