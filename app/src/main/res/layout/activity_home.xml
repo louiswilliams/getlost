@@ -1,4 +1,4 @@
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
@@ -6,9 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
+    <org.louiswilliams.getlost.getlost.app.CompassView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/compassView" />
+
     <TextView
         android:id="@+id/label"
-        android:layout_width="fill_parent"
-        android:layout_height="14pt" />
+        android:layout_width="wrap_content"
+        android:layout_height="14pt"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5pt"
+        />
 
-</LinearLayout>
+
+</RelativeLayout>

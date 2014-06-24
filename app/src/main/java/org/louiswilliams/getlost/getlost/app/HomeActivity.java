@@ -2,6 +2,7 @@ package org.louiswilliams.getlost.getlost.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -16,15 +17,18 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class HomeActivity extends ActionBarActivity implements SensorEventListener, LocationListener{
 
-
+    private static final int ADD_ACTIVITY_REQUEST = 0;
     private CharSequence mTitle;
     private TextView mLabel;
+    private CompassView compass;
     private LocationManager mLocationManager;
     private Location currentLocation;
+    private Location destination;
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private Sensor mMagnetic;
@@ -45,13 +49,17 @@ public class HomeActivity extends ActionBarActivity implements SensorEventListen
         mMagnetic = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if ( mMagnetic == null || mAccelerometer == null) {
-            mLabel.setText("This device is cannot be used.");
+            mLabel.setText("This device does not have the necessary sensors.");
         } else {
             mOrientation = new float[3];
         }
 
         // Initialize location mananger and location
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Initialize compass
+        compass = (CompassView) findViewById(R.id.compassView);
+        compass.setBackgroundColor(Color.WHITE);
 
     }
 
@@ -77,7 +85,21 @@ public class HomeActivity extends ActionBarActivity implements SensorEventListen
 
     @Override
     public void onActivityResult(int request, int result, Intent data) {
+        if (request == ADD_ACTIVITY_REQUEST) {
+            if (result == RESULT_OK) {
+                float[] results = new float[3];
 
+                destination = new Location(LocationManager.GPS_PROVIDER);
+                destination.setLatitude(data.getDoubleExtra("lat",0.0));
+                destination.setLongitude(data.getDoubleExtra("long",0.0));
+
+                currentLocation.distanceBetween(currentLocation.getLatitude(), currentLocation.getLongitude(),
+                        destination.getLatitude(), destination.getLongitude(), results);
+                Toast.makeText(getApplicationContext(), "Distance: " + results[0] + ", Heading: " + results[1], Toast.LENGTH_SHORT).show();
+
+
+            }
+        }
     }
 
     @Override
@@ -86,9 +108,13 @@ public class HomeActivity extends ActionBarActivity implements SensorEventListen
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_add_place) {
-            startActivityForResult(new Intent(getApplicationContext(), AddActivity.class), 1);
-            return true;
+        switch (id) {
+            case R.id.action_add_place:
+                startActivityForResult(new Intent(getApplicationContext(), AddActivity.class), ADD_ACTIVITY_REQUEST);
+                return true;
+            case R.id.action_settings:
+                startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -119,7 +145,8 @@ public class HomeActivity extends ActionBarActivity implements SensorEventListen
             float[]rMatrix = new float[9];
             if (SensorManager.getRotationMatrix(rMatrix, null, mAccelVector, mMagVector)) {
                 SensorManager.getOrientation(rMatrix, mOrientation);
-        //        mLabel.setText("degrees from N: " + (180*mOrientation[0]/(Math.PI)) );
+                float degrees = (float) Math.toDegrees(mOrientation[0]) + 180;
+                drawCompass(degrees);
             }
         }
     }
@@ -130,12 +157,24 @@ public class HomeActivity extends ActionBarActivity implements SensorEventListen
     @Override
     public void onLocationChanged(Location location) {
         currentLocation = location;
-        mLabel.setText(Float.toString(currentLocation.getBearing()));
+//        mLabel.setText(Float.toString(currentLocation.getBearing()));
+//        drawCompass(currentLocation.getBearing());
+
     }
 
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {}
 
+    @Override
     public void onProviderEnabled(String provider) {}
 
+    @Override
     public void onProviderDisabled(String provider) {}
+
+    private void drawCompass(float degrees) {
+        mLabel.setText("degrees from N: " + degrees );
+        compass.setRotate(- degrees);
+        // This forces the view to redraw
+        compass.invalidate();
+    }
 }

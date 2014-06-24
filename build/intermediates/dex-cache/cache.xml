@@ -8,6 +8,12 @@
         revision="19.1.0"
         sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67"/>
     <item
+        dex="C:\Users\Louis\Documents\Android Studio\GetLost\app\build\intermediates\pre-dexed\debug\classes-003b14ca7cb4505268b09cf091184e337a837048.jar"
+        jar="C:\Users\Louis\Documents\Android Studio\GetLost\build\intermediates\exploded-aar\com.google.android.gms\play-services\4.4.52\classes.jar"
+        jumboMode="false"
+        revision="19.1.0"
+        sha1="3dfdf1db5ce5ea2999a5dcde8c8e650b02660059"/>
+    <item
         dex="C:\Users\Louis\Documents\Android Studio\GetLost\app\build\intermediates\pre-dexed\debug\classes-7996fc50bc022476ca579b16db82d62759a7f199.jar"
         jar="C:\Users\Louis\Documents\Android Studio\GetLost\build\intermediates\exploded-aar\com.android.support\appcompat-v7\19.1.0\classes.jar"
         jumboMode="false"
